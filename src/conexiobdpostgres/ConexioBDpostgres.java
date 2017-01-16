@@ -16,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -68,25 +70,48 @@ public class ConexioBDpostgres {
 //    }      
 //        if(insert){
             
-           statement = connection.createStatement();
-           result = statement.executeQuery("SELECT * FROM prova;");
-
-            System.out.println("*************Resultat************");
-           
-            while (result.next()) {
-                System.out.println(result.getString(1)+": "+result.getString(2));
-                                System.out.print("\n");
-               
-            }           
+//           statement = connection.createStatement();
+//           result = statement.executeQuery("SELECT * FROM productes;");
+//
+//            System.out.println("*************Resultat************");
+//           
+//            while (result.next()) {
+//                System.out.println(result.getString(1)+": "+result.getString(2));
+//                                System.out.print("\n");
+//               
+//            }           
         
             
 //        }   
            
+
+ String query = "SELECT * FROM productes WHERE clau=1;"
+                    + "SELECT part,tipus FROM productes WHERE clau=2;"
+                    + "SELECT part,tipus FROM productes WHERE clau=3";
+
+            pst = connection.prepareStatement(query);
+            boolean isResult = pst.execute();
+            
+            
+            
+
+            do {
+                result = pst.getResultSet();
+
+                while (result.next()) {
+                    System.out.print(result.getString(1));
+                    System.out.print(": ");
+                    System.out.println(result.getString(2));
+                }
+
+                isResult = pst.getMoreResults();
+            } while (isResult);
           
         
         
         }catch (SQLException ex){
-            
+              Logger lgr = Logger.getLogger( ConexioBDpostgres.class.getName());
+            lgr.log(Level.SEVERE, ex.getMessage(), ex);
             System.out.println("Error en la sentencia SQL");
             
         
